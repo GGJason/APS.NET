@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: APS API (Formly Forge API)
+  description: APS API based on https://aps.autodesk.com
+  version: 1.0.0
+servers:
+  - url: 'https://developer.api.autodesk.com'
+paths:
+  /authentication/v1/authenticate:
+    description: Get a two-legged access token by providing your app’s client ID and secret.
+    post:
+      tags:
+        - Authenticate
+      summary: Get a two-legged access token by providing your app’s client ID and secret.
+      requestBody: 
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/TwoLeggedAuthenticateRequestBody"
+      responses: 
+        200:
+          description: Successful request; access token returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  token_type:
+                    type: string
+                    enum:
+                      - Bearer
+                  access_token:
+                    type: string
+                    format: jwt
+                  expires_in:
+                    type: integer
+        400:
+          description: One or more parameters are invalid. Examine the response payload body for details.
+        401:
+          description: The client_id and client_secret combination is not valid.
+        403: 
+          description: The client_id is not authorized to access this endpoint.
+        405:
+          description: The Content-Type header is missing or specifies a value other than application/x-www-form-urlencoded.
+        409:
+          description: Rate limit exceeded; wait some time before retrying.
+        500:
+          description: Generic internal server error.
+components: 
+  schemas: 
+    TwoLeggedAuthenticateRequestBody:              
+      type: object
+      properties:
+        client_id:
+          type: string
+          nullable: false
+          description: Client ID of the app
+        client_secret:
+          type: string
+          nullable: false
+          description: Client secret of the app
+        grant_type:
+          type: string
+          default: client_credentials
+          description: Must be client_credentials
+        scopes:
+          type: string
+          description: |
+            Space-separated list of required scopes
+            Note: A URL-encoded space is %20.
+            * See the [Scopes](https://aps.autodesk.com/en/docs/oauth/v1/overview/scopes) page for more information on when scopes are required.
+          # example: 'data:read%20hub:read'
+          
+      required: 
+        - client_id
+        - client_secret
+        - grant_type
+        
