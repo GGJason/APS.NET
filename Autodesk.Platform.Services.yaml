@@ -10,7 +10,7 @@ paths:
     description: Get a two-legged access token by providing your app’s client ID and secret.
     post:
       tags:
-        - Authenticate
+        - TwoLegged
       summary: Get a two-legged access token by providing your app’s client ID and secret.
       requestBody: 
         content:
@@ -23,17 +23,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: 
-                  token_type:
-                    type: string
-                    enum:
-                      - Bearer
-                  access_token:
-                    type: string
-                    format: jwt
-                  expires_in:
-                    type: integer
+                $ref: "#/components/schemas/Bearer"
         400:
           description: One or more parameters are invalid. Examine the response payload body for details.
         401:
@@ -48,6 +38,18 @@ paths:
           description: Generic internal server error.
 components: 
   schemas: 
+    Bearer:
+      type: object
+      properties:
+        token_type:
+          type: string
+          enum:
+            - Bearer
+        access_token:
+          type: string
+          format: jwt
+        expires_in:
+          type: integer
     TwoLeggedAuthenticateRequestBody:              
       type: object
       properties:
